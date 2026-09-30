@@ -59,7 +59,7 @@ export const setlistsApi = {
   async remove(id: string) {
     const { data, error } = await supabase
       .from('setlists')
-      .delete()
+      .update({ archived_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single()
