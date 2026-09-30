@@ -55,7 +55,7 @@ export const it = {
 
   layout: {
     appName: 'Theorems Hub',
-    appShortName: 'TheoremHub',
+    appShortName: 'Theorems Hub',
     maintenanceTitle: 'Manutenzione in corso',
     maintenanceSubtitle: 'Stiamo eseguendo lavori di manutenzione. Torneremo presto.',
     maintenanceFallback: 'Torniamo presto.',
@@ -157,13 +157,13 @@ export const it = {
       submitting: 'Creazione account…',
       failed: 'Creazione account non riuscita',
       supabaseHint:
-        'Se la registrazione fallisce, verifica la configurazione Supabase (URL, chiave anonima e conferma email).',
+        'Se la registrazione fallisce, contatta il SysAdmin.',
     },
   },
 
   dashboard: {
     welcome: (name: string) => `Ciao, ${name}`,
-    fallbackName: 'lì',
+    fallbackName: 'membro',
     sections: {
       bulletin: 'Bacheca',
       activeForms: 'Moduli attivi',
@@ -190,7 +190,7 @@ export const it = {
     subtitle: 'Tutto il repertorio',
     addSong: 'Aggiungi brano',
     adminOnly: 'Solo admin e manager.',
-    chooseMode: 'Come vuoi aggiungere il brano?',
+    chooseMode: 'Che metodo di aggiunta vuoi usare?',
     manual: 'Manuale',
     searchOnline: 'Cerca online',
     back: 'Indietro',
@@ -199,7 +199,7 @@ export const it = {
       titlePlaceholder: 'Titolo del brano',
       artistLabel: 'Artista',
       artistPlaceholder: "Nome dell'artista",
-      durationLabel: 'Durata',
+      durationLabel: 'Durata (in mm:ss)',
       durationPlaceholder: 'es. 3:45',
       submit: 'Aggiungi brano',
       submitting: 'Aggiungendo…',
@@ -218,8 +218,8 @@ export const it = {
 
   mySongs: {
     title: 'I tuoi brani',
-    subtitle: 'I brani assegnati a te e il tuo strumento',
-    empty: 'Nessun brano assegnato a te.',
+    subtitle: '',
+    empty: 'Nessun hai ancora nessun brano assegnato',
   },
 
   setlists: {
@@ -313,7 +313,7 @@ export const it = {
       locationLabel: 'Luogo',
       locationPlaceholder: 'Luogo',
       deadlineLabel: 'Scadenza candidature',
-      instrumentsLabel: 'Strumenti aperti per questa audizione',
+      instrumentsLabel: 'Strumenti di questa audizione',
       instrumentsHint: 'Seleziona almeno uno strumento.',
       maxInstrumentsLabel: 'Max strumenti per candidato',
       maxInstrumentsHint: 'Quanti strumenti può indicare ciascun candidato (1–10).',
@@ -328,11 +328,11 @@ export const it = {
       admitted: 'Ammesso',
       rejected: 'Rifiutato',
     },
-    errorJudge: 'Errore nel giudizio.',
+    errorJudge: 'Errore.',
     apply: 'Candidati',
     close: 'Chiudi',
     delete: 'Elimina',
-    deleteConfirm: 'Eliminare questa audizione? Non sarà più visibile.',
+    deleteConfirm: 'Vuoi eliminare questa audizione? Non sarà più visibile.',
     empty: 'Nessuna audizione.',
     errorCreate: 'Errore nella creazione.',
     instrumentAria: 'Strumento',
@@ -345,7 +345,7 @@ export const it = {
     noSong: 'Nessun brano',
     deadlineHint: 'Ora italiana (Europe/Rome).',
     maxInstrumentsSuffix: (n: number) => `max ${n} strument${n === 1 ? 'o' : 'i'}`,
-    openInstruments: 'Strumenti aperti:',
+    openInstruments: 'Strumenti dell\'audizione:',
   },
 
   events: {
@@ -434,7 +434,7 @@ export const it = {
     },
     type: {
       open: 'Aperto',
-      logged_in: 'Loggati',
+      logged_in: 'Utenti loggati',
     },
     preview: 'Anteprima',
     edit: 'Modifica',

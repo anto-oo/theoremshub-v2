@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { resetZoomAfterLogin } from '@/lib/utils'
 import { strings as t } from '@/i18n'
 
 function bannerActive(
@@ -42,6 +43,7 @@ export default function Login() {
     setPending(true)
     try {
       await signIn(username.trim(), password)
+      resetZoomAfterLogin()
       navigate('/dashboard')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t.auth.login.invalidCredentials)
