@@ -152,7 +152,7 @@ export default function Proposals() {
               imageUrl={p.album_art_url}
               action={
                 <>
-                  <Badge variant="secondary">{t.proposals.status[p.status]}</Badge>
+                  <Badge variant="secondary">{t.proposals.status[p.status as keyof typeof t.proposals.status]}</Badge>
                   <RowIconButton
                     label={expanded === p.id ? t.proposals.closeCommentsOf(p.title) : t.proposals.commentsOf(p.title)}
                     onClick={() => setExpanded((v) => (v === p.id ? null : p.id))}
