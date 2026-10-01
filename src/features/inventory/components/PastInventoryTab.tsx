@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { Archive, ArrowRight } from 'lucide-react'
 import { useInventoryItems, useInventorySnapshots, useSnapshotItems } from '@/features/inventory/hooks'
 import { diffSnapshots } from '@/features/inventory/lib/snapshotDiff'
 import { strings as t } from '@/i18n'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { formatDateTimeIt } from '@/lib/romeTime'
 import { Badge } from '@/components/ui/badge'
 
@@ -14,7 +15,7 @@ export default function PastInventoryTab() {
   const ids = useMemo(() => (snapshots ?? []).map((s) => s.id), [snapshots])
 
   if (isLoading) return <p className="text-sm text-muted-foreground">{t.common.loading}</p>
-  if (ids.length === 0) return <p className="py-12 text-center text-sm text-muted-foreground">{t.inventory.noHistory}</p>
+  if (ids.length === 0) return <EmptyScreen icon={<Archive size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.inventory.noHistory} />
 
   return (
     <div className="space-y-3">

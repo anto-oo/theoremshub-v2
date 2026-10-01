@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
-import { Paperclip, Pencil, Pin, PinOff, Trash2 } from 'lucide-react'
+import { Newspaper, Paperclip, Pencil, Pin, PinOff, Trash2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRole } from '@/hooks/useRole'
 import {
@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AddButton, AddDialog } from '@/shared/components/AddDialog'
 import { RowIconButton } from '@/shared/components/MediaRow'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
@@ -226,7 +227,7 @@ export default function Bulletin() {
           ))}
         </ul>
         {(data?.posts ?? []).length === 0 && !isLoading && (
-          <p className="mt-2 text-sm text-muted-foreground">{t.dashboard.empty.posts}</p>
+          <EmptyScreen icon={<Newspaper size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.dashboard.empty.posts} />
         )}
       </div>
 

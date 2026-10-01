@@ -427,6 +427,7 @@ export const it = {
   surveys: {
     title: 'Sondaggi',
     newSurvey: 'Nuovo sondaggio',
+    empty: 'Nessun sondaggio.',
     status: {
       draft: 'Bozza',
       open: 'Attivo',
@@ -558,6 +559,7 @@ export const it = {
 
   members: {
     title: 'Membri',
+    empty: 'Nessun membro.',
     badge: 'Badge',
     revoke: 'Revoca',
     adminNoteOptional: 'Nota admin (facoltativa)',

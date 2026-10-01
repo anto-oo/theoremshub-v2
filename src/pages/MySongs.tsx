@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { Music } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { formatDuration } from '@/lib/utils'
 import { InstrumentBadge, MediaRow } from '@/shared/components/MediaRow'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { strings as t } from '@/i18n'
 
 interface AssignedRow {
@@ -88,7 +90,7 @@ export default function MySongs() {
           ))}
         </ul>
         {(data ?? []).length === 0 && !isLoading && (
-          <p className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">{t.mySongs.empty}</p>
+          <EmptyScreen icon={<Music size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.mySongs.empty} />
         )}
       </div>
     </div>

@@ -54,10 +54,9 @@ import { generateSetlistPdf } from '@/features/setlists/lib/pdf'
 import { useMembersAdmin } from '@/features/admin/hooks'
 import { supabase } from '@/lib/supabase'
 import { AddButton, AddDialog } from '@/shared/components/AddDialog'
-import { InstrumentBadge, RowIconButton } from '@/shared/components/MediaRow'
-import { Badge } from '@/components/ui/badge'
+import { InstrumentBadge, MediaRow, RowIconButton } from '@/shared/components/MediaRow'
+import { EmptyScreen, ErrorAlert, LoadingState } from '@/shared/components/StateFeedback'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -296,7 +295,7 @@ function AssignmentDialog({ entryId, songTitle, songArtist, memberRoleMap, isAdm
   )
 }
 
-// --- old_ver SortableSongCard: same Card layout, only buttons swapped to RowIconButton chips ---
+// Site-style song row: MediaRow (67px thumb, 15px title, 11px subtitle, 28px chips)
 function SortableSongCard({ entry, index, members, roles, entryAssignments, canManage, onAssign, onRemove, onRemoveAssignment }: {
   entry: Entry
   index: number
@@ -313,72 +312,67 @@ function SortableSongCard({ entry, index, members, roles, entryAssignments, canM
   const roleName = (id: number): string => roles.find((r) => r.id === id)?.name ?? String(id)
 
   return (
-    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}>
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
+    <MediaRow
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
+      title={song ? song.title : entry.song_id.slice(0, 8)}
+      titleBadge={
+        <span className="inline-flex h-5 shrink-0 items-center rounded-[11px] bg-muted px-2 text-[11px] text-muted-foreground">
+          #{index + 1}
+        </span>
+      }
+      subtitle={[song?.artist, formatSong(song?.duration_seconds), t.setlists.position(entry.position)].filter(Boolean).join(' • ')}
+      imageUrl={song?.album_art_url}
+      action={
+        <>
           {canManage && (
             <span
               {...attributes}
               {...listeners}
+              role="button"
+              tabIndex={0}
               aria-label={t.setlists.dragToReorder(song?.title ?? '')}
-              className="cursor-grab text-muted-foreground transition-colors hover:text-foreground active:cursor-grabbing"
+              className="flex h-7 w-7 cursor-grab items-center justify-center rounded-[5px] bg-[#050a16] text-white transition-colors hover:bg-[#1b2542] active:cursor-grabbing"
             >
-              <GripVertical size={20} aria-hidden="true" />
+              <GripVertical size={16} aria-hidden="true" />
             </span>
           )}
-          <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-medium">
-            {index + 1}
-          </span>
-          {song?.album_art_url ? (
-            <img src={song.album_art_url} alt="" className="h-12 w-12 shrink-0 rounded object-cover" />
-          ) : (
-            <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted">
-              <Music size={24} aria-hidden="true" className="text-muted-foreground" />
-            </span>
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold">{song ? song.title : entry.song_id.slice(0, 8)}</p>
-            <p className="truncate text-sm text-muted-foreground">
-              {[song?.artist, formatSong(song?.duration_seconds), t.setlists.position(entry.position)].filter(Boolean).join(' • ')}
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <RowIconButton label={t.setlists.assignmentsOf(song?.title ?? '')} onClick={onAssign}>
-              <Users size={16} aria-hidden="true" />
+          <RowIconButton label={t.setlists.assignmentsOf(song?.title ?? '')} onClick={onAssign}>
+            <Users size={16} aria-hidden="true" />
+          </RowIconButton>
+          {canManage && (
+            <RowIconButton label={`${t.common.delete} ${song?.title ?? ''}`} onClick={onRemove} tone="danger">
+              <Trash2 size={16} aria-hidden="true" />
             </RowIconButton>
-            {canManage && (
-              <RowIconButton label={`${t.common.delete} ${song?.title ?? ''}`} onClick={onRemove} tone="danger">
-                <Trash2 size={16} aria-hidden="true" />
-              </RowIconButton>
-            )}
-          </div>
-        </div>
-        {entryAssignments.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2 pl-14">
+          )}
+        </>
+      }
+      footer={
+        entryAssignments.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
             {entryAssignments.map((a) => {
               const m = members.find((x) => x.id === a.member_id)
               return (
-                <Badge key={a.id} variant="secondary" className="gap-1">
-                  {m ? memberDisplay(m) : a.member_id.slice(0, 8)} • {roleName(a.instrument_role_id)}
+                <span key={a.id} className="inline-flex items-center gap-1.5">
+                  <InstrumentBadge name={roleName(a.instrument_role_id)} />
+                  <span className="text-[11px]">{m ? memberDisplay(m) : a.member_id.slice(0, 8)}</span>
                   {canManage && (
                     <button
                       type="button"
                       onClick={() => onRemoveAssignment(a.id)}
                       aria-label={`${t.setlists.remove} ${m ? memberDisplay(m) : ''}`}
-                      className="ml-1 hover:text-destructive"
+                      className="text-muted-foreground transition-colors hover:text-destructive"
                     >
                       <X size={12} aria-hidden="true" />
                     </button>
                   )}
-                </Badge>
+                </span>
               )
             })}
           </div>
-        )}
-      </CardContent>
-    </Card>
-    </div>
+        ) : undefined
+      }
+    />
   )
 }
 
@@ -534,37 +528,46 @@ function SetlistDetailScreen({ setlistId, isAdmin, onBack }: {
 
   const managingEntry = (entries ?? []).find((e) => e.id === managingEntryId) ?? null
 
-  if (!setlist) return <p className="py-12 text-center text-sm text-muted-foreground">{t.setlists.noSetlists}</p>
+  if (!setlist) return <EmptyScreen icon={<ListMusic size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.setlists.noSetlists} />
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-        <Button type="button" variant="ghost" size="icon" onClick={onBack} aria-label={t.common.back}>
-          <ArrowLeft size={20} aria-hidden="true" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">{setlist.name}</h1>
-          {setlist.description && (
-            <p className="mt-1 text-muted-foreground">{setlist.description}</p>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {(entries ?? []).length > 0 && (
-            <>
-              <Badge variant="outline" className="gap-1.5 px-3 py-1.5">
-                <Clock size={16} aria-hidden="true" />
+    <div>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <RowIconButton label={t.common.back} onClick={onBack}>
+            <ArrowLeft size={16} aria-hidden="true" />
+          </RowIconButton>
+          <div className="min-w-0">
+            <h1 className="text-[32px] leading-tight font-normal">{setlist.name}</h1>
+            {setlist.description ? (
+              <p className="mt-1 text-sm text-muted-foreground">{setlist.description}</p>
+            ) : (
+              (entries ?? []).length > 0 && (
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Clock size={14} aria-hidden="true" />
+                  {formatTotal(totalSeconds)}
+                </p>
+              )
+            )}
+            {setlist.description && (entries ?? []).length > 0 && (
+              <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Clock size={14} aria-hidden="true" />
                 {formatTotal(totalSeconds)}
-              </Badge>
-              <RowIconButton label={t.setlists.downloadPdf} onClick={handlePdf}>
-                <Download size={16} aria-hidden="true" />
-              </RowIconButton>
-            </>
-          )}
+              </p>
+            )}
+          </div>
         </div>
+        {(entries ?? []).length > 0 && (
+          <div className="flex shrink-0 items-center gap-2">
+            <RowIconButton label={t.setlists.downloadPdf} onClick={handlePdf}>
+              <Download size={16} aria-hidden="true" />
+            </RowIconButton>
+          </div>
+        )}
       </div>
 
       {isAdmin && (
-        <div className="flex items-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center gap-2">
           <Button type="button" variant="outline" size="sm" onClick={() => setAddOpen(true)}>
             <Plus size={16} aria-hidden="true" /> {t.setlists.addSong}
           </Button>
@@ -574,42 +577,37 @@ function SetlistDetailScreen({ setlistId, isAdmin, onBack }: {
         </div>
       )}
 
-      {songsLoading ? (
-        <div className="space-y-3" aria-label={t.common.loading}>
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl border bg-card" />
-          ))}
-        </div>
-      ) : (entries ?? []).length > 0 ? (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={(entries ?? []).map((e) => e.id)} strategy={verticalListSortingStrategy}>
-            <div className="space-y-2">
-              {(entries ?? []).map((e, i) => (
-                <SortableSongCard
-                  key={e.id}
-                  entry={e}
-                  index={i}
-                  members={members ?? []}
-                  roles={roles}
-                  entryAssignments={assignmentsByEntry.get(e.id) ?? []}
-                  canManage={isAdmin}
-                  onAssign={() => setManagingEntryId(e.id)}
-                  onRemove={() => removeSong.mutate({ id: e.id, setlistId })}
-                  onRemoveAssignment={(assignmentId) => removeAssignment.mutate(
-                    { id: assignmentId, setlistSongId: e.id },
-                    { onSuccess: invalidateAssignments },
-                  )}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-      ) : (
-        <div className="py-12 text-center">
-          <Music size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">{t.setlists.emptySongs}</h3>
-        </div>
-      )}
+      <div className="mt-4">
+        {songsLoading ? (
+          <LoadingState />
+        ) : (entries ?? []).length > 0 ? (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={(entries ?? []).map((e) => e.id)} strategy={verticalListSortingStrategy}>
+              <ul className="space-y-3">
+                {(entries ?? []).map((e, i) => (
+                  <SortableSongCard
+                    key={e.id}
+                    entry={e}
+                    index={i}
+                    members={members ?? []}
+                    roles={roles}
+                    entryAssignments={assignmentsByEntry.get(e.id) ?? []}
+                    canManage={isAdmin}
+                    onAssign={() => setManagingEntryId(e.id)}
+                    onRemove={() => removeSong.mutate({ id: e.id, setlistId })}
+                    onRemoveAssignment={(assignmentId) => removeAssignment.mutate(
+                      { id: assignmentId, setlistSongId: e.id },
+                      { onSuccess: invalidateAssignments },
+                    )}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
+        ) : (
+          <EmptyScreen icon={<Music size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.setlists.emptySongs} />
+        )}
+      </div>
 
       <AddDialog open={addOpen} onOpenChange={setAddOpen} title={t.setlists.addSong} className="max-w-lg">
         <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
@@ -619,12 +617,12 @@ function SetlistDetailScreen({ setlistId, isAdmin, onBack }: {
                 type="button"
                 onClick={() => void handleAddSong(s.id)}
                 disabled={addSong.isPending}
-                className="flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-accent/50 disabled:opacity-50"
+                className="flex w-full items-center gap-3 rounded-[13px] border bg-card p-2.5 text-left transition-colors hover:bg-muted disabled:opacity-50"
               >
                 {s.album_art_url ? (
-                  <img src={s.album_art_url} alt="" loading="lazy" className="h-10 w-10 shrink-0 rounded object-cover" />
+                  <img src={s.album_art_url} alt="" loading="lazy" className="h-10 w-10 shrink-0 rounded-[12px] object-cover" />
                 ) : (
-                  <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-muted">
+                  <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-muted">
                     <Music size={20} aria-hidden="true" className="text-muted-foreground" />
                   </span>
                 )}
@@ -651,7 +649,7 @@ function SetlistDetailScreen({ setlistId, isAdmin, onBack }: {
                 type="button"
                 onClick={() => void handleImport(s.id)}
                 disabled={importingId !== null}
-                className="flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-accent/50 disabled:opacity-50"
+                className="flex w-full items-center gap-3 rounded-[13px] border bg-card p-2.5 text-left transition-colors hover:bg-muted disabled:opacity-50"
               >
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-medium">{s.name}</span>
@@ -759,28 +757,28 @@ export default function Setlists() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t.setlists.title}</h1>
-          <p className="mt-1 text-muted-foreground">{t.songs.subtitle}</p>
+    <div>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-[32px] leading-tight font-normal">{t.setlists.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t.songs.subtitle}</p>
         </div>
         {isAdmin && <AddButton label={t.setlists.newSetlist} onClick={() => setDialogOpen(true)} />}
       </div>
-      {error !== '' && <p className="text-sm text-destructive">{error}</p>}
+      {error !== '' && <ErrorAlert message={error} className="mt-3" />}
 
       {isAdmin && (
         <AddDialog open={dialogOpen} onOpenChange={setDialogOpen} title={t.setlists.newSetlist}>
           <form className="space-y-4" onSubmit={handleCreate}>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="setlist-name">{t.setlists.form.nameLabel}</Label>
               <Input id="setlist-name" placeholder={t.setlists.form.namePlaceholder} value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="setlist-description">{t.common.description}</Label>
               <Input id="setlist-description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.events.form.descriptionPlaceholder} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="setlist-date">{t.events.form.dateLabel}</Label>
               <Input id="setlist-date" type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
             </div>
@@ -797,7 +795,7 @@ export default function Setlists() {
       )}
 
       {isAdmin && (setlists ?? []).length > 0 && (
-        <div className="flex items-center gap-3">
+        <div className="mt-4 flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Checkbox
               checked={selected.size === (setlists ?? []).length && (setlists ?? []).length > 0}
@@ -821,59 +819,62 @@ export default function Setlists() {
         </div>
       )}
 
-      {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-label={t.common.loading}>
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-48 animate-pulse rounded-xl border bg-card" />
-          ))}
-        </div>
-      ) : (setlists ?? []).length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {(setlists ?? []).map((s) => {
-            const st = stats.get(s.id) ?? { count: 0, seconds: 0 }
-            return (
-              <div key={s.id} className="relative">
-                {isAdmin && (
-                  <div className="absolute top-3 left-3 z-10" onClick={(e) => e.stopPropagation()}>
-                    <Checkbox
-                      checked={selected.has(s.id)}
-                      onChange={() => toggleSelect(s.id)}
-                      aria-label={`${s.name}`}
-                    />
-                  </div>
-                )}
-                <Card
-                  className="cursor-pointer transition-colors hover:border-primary/50"
-                  onClick={() => setSelectedId(s.id)}
-                >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <CardTitle className={`text-lg ${isAdmin ? 'pl-7' : ''}`}>{s.name}</CardTitle>
-                      <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {s.event_date && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar size={16} aria-hidden="true" />
-                        {format(new Date(s.event_date), 'PPP')}
+      <div className="mt-4">
+        {isLoading ? (
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3" aria-label={t.common.loading}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-28 animate-pulse rounded-[16px] border border-white/10 bg-card" />
+            ))}
+          </div>
+        ) : (setlists ?? []).length > 0 ? (
+          <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {(setlists ?? []).map((s) => {
+              const st = stats.get(s.id) ?? { count: 0, seconds: 0 }
+              return (
+                <li key={s.id} className="relative">
+                  {isAdmin && (
+                    <span className="absolute top-4 left-4 z-10" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selected.has(s.id)}
+                        onChange={() => toggleSelect(s.id)}
+                        aria-label={`${s.name}`}
+                      />
+                    </span>
+                  )}
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedId(s.id)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedId(s.id) }}
+                    className="flex h-full cursor-pointer flex-col rounded-[16px] border border-white/10 bg-[#050a16] px-5 pt-4 pb-3 text-white transition-colors hover:bg-[#1b2542]"
+                  >
+                    <div className={`min-w-0 flex-1 ${isAdmin ? 'pl-7' : ''}`}>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="min-w-0 truncate text-[22px] leading-tight font-normal">{s.name}</p>
+                        <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-white/70" />
                       </div>
-                    )}
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Music size={16} aria-hidden="true" />
-                        {t.setlists.items(st.count)}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={16} aria-hidden="true" />
-                        {formatTotal(st.seconds)}
-                      </span>
+                      {s.event_date && (
+                        <p className="mt-0.5 flex items-center gap-1.5 text-[14px] text-white/90">
+                          <Calendar size={14} aria-hidden="true" />
+                          {format(new Date(s.event_date), 'PPP')}
+                        </p>
+                      )}
+                      <p className="mt-0.5 flex items-center gap-3 text-[14px] text-white/90">
+                        <span className="flex items-center gap-1.5">
+                          <Music size={14} aria-hidden="true" />
+                          {t.setlists.items(st.count)}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock size={14} aria-hidden="true" />
+                          {formatTotal(st.seconds)}
+                        </span>
+                      </p>
+                      {s.description && (
+                        <p className="mt-2 line-clamp-2 text-sm text-white/70">{s.description}</p>
+                      )}
                     </div>
-                    {s.description && (
-                      <p className="line-clamp-2 text-sm text-muted-foreground">{s.description}</p>
-                    )}
                     {isAdmin && (
-                      <div className="flex flex-wrap items-center gap-2 pt-2" onClick={(e) => e.stopPropagation()}>
+                      <span className="mt-2 flex items-center gap-2 border-t border-white/10 pt-2" onClick={(e) => e.stopPropagation()}>
                         <RowIconButton label={`${t.setlists.detail} ${s.name}`} onClick={() => setSelectedId(s.id)}>
                           <ChevronRight size={16} aria-hidden="true" />
                         </RowIconButton>
@@ -883,20 +884,17 @@ export default function Setlists() {
                         <RowIconButton label={`${t.common.delete} ${s.name}`} onClick={() => setDeleteId(s.id)} tone="danger">
                           <Trash2 size={16} aria-hidden="true" />
                         </RowIconButton>
-                      </div>
+                      </span>
                     )}
-                  </CardContent>
-                </Card>
-              </div>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="py-12 text-center">
-          <ListMusic size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">{t.setlists.noSetlists}</h3>
-        </div>
-      )}
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <EmptyScreen icon={<ListMusic size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.setlists.noSetlists} />
+        )}
+      </div>
 
       <ConfirmDialog
         open={deleteId !== null}

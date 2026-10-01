@@ -13,6 +13,7 @@ import {
 import { useSetlists } from '@/features/setlists/hooks'
 import { AddButton, AddDialog } from '@/shared/components/AddDialog'
 import { InstrumentBadge, RowIconButton } from '@/shared/components/MediaRow'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DatePicker } from '@/components/ui/date-picker'
@@ -284,10 +285,7 @@ export default function Events() {
           </ul>
         )}
         {!isLoading && (events ?? []).length === 0 && (
-          <div className="py-12 text-center">
-            <CalendarDays size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-semibold">{t.events.empty}</h3>
-          </div>
+          <EmptyScreen icon={<CalendarDays size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.events.empty} />
         )}
       </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Mic } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRole } from '@/hooks/useRole'
 import {
@@ -21,6 +22,7 @@ import { auditionInstrumentsApi } from '@/features/auditions/api'
 import { supabase } from '@/lib/supabase'
 import { formatDateIt, formatDateTimeIt, romeWallTimeToUtcIso } from '@/lib/romeTime'
 import { AddButton, AddDialog } from '@/shared/components/AddDialog'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DatePicker, DateTimePicker } from '@/components/ui/date-picker'
@@ -464,7 +466,7 @@ export default function Auditions() {
           ))}
         </ul>
         {(auditions ?? []).length === 0 && !isLoading && (
-          <p className="mt-2 text-sm text-slate-500">{t.auditions.empty}</p>
+          <EmptyScreen icon={<Mic size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.auditions.empty} />
         )}
       </div>
     </div>

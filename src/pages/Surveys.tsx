@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Plus, X } from 'lucide-react'
+import { ClipboardList, Plus, X } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   useCreateSurvey,
@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AddButton, AddDialog } from '@/shared/components/AddDialog'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { Badge } from '@/components/ui/badge'
 
 function asQuestions(value: unknown): SurveyQuestion[] {
@@ -231,6 +232,9 @@ export default function Surveys() {
             </div>
           </div>
         ))}
+        {(surveys ?? []).length === 0 && (
+          <EmptyScreen icon={<ClipboardList size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.surveys.empty} />
+        )}
       </div>
 
       {selected && (

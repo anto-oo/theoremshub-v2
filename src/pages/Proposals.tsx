@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { MediaRow, RowIconButton } from '@/shared/components/MediaRow'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { formatDuration } from '@/lib/utils'
 import SongSearch from '@/features/songs/components/SongSearch'
 import { resolveSongMetadata, type DeezerTrackDetails } from '@/features/songs/api/deezer'
@@ -196,7 +197,7 @@ export default function Proposals() {
           ))}
         </ul>
         {(proposals ?? []).length === 0 && !isLoading && (
-          <p className="mt-2 text-sm text-slate-500">{t.proposals.empty}</p>
+          <EmptyScreen icon={<MessageSquare size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.proposals.empty} />
         )}
       </div>
     </div>

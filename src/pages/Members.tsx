@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal, Users } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRole } from '@/hooks/useRole'
 import {
@@ -16,6 +16,7 @@ import {
 import { useCreateBadge, useMemberBadges, useRevokeBadge } from '@/features/badges/hooks'
 import type { AppRole } from '@/lib/supabase'
 import { InstrumentBadge, MediaRow, RoleBadge, RowIconButton } from '@/shared/components/MediaRow'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { AddDialog } from '@/shared/components/AddDialog'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -306,6 +307,9 @@ export default function Members() {
           )
         })}
       </ul>
+      {(members ?? []).length === 0 && (
+        <EmptyScreen icon={<Users size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.members.empty} />
+      )}
       {isAdmin && (
         <ManageMemberDialog memberId={managingId} onOpenChange={(open) => { if (!open) setManagingId(null) }} />
       )}

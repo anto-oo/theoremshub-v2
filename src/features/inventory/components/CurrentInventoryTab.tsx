@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Plus, Search } from 'lucide-react'
+import { Package, Plus, Search } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRole } from '@/hooks/useRole'
 import {
@@ -18,6 +18,7 @@ import {
   type InventoryPdfData,
 } from '@/features/inventory/lib/generateInventoryPdf'
 import { strings as t } from '@/i18n'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
@@ -204,7 +205,7 @@ export default function CurrentInventoryTab() {
       ) : rows.length > 0 ? (
         <p className="py-12 text-center text-sm text-muted-foreground">{t.common.noResults}</p>
       ) : (
-        <p className="py-12 text-center text-sm text-muted-foreground">{t.inventory.noItems}</p>
+        <EmptyScreen icon={<Package size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={t.inventory.noItems} />
       )}
 
       {isAdmin && (

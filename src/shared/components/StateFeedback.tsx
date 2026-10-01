@@ -20,6 +20,15 @@ export function LoadingState({ label = t.common.loading }: { label?: string }) {
   )
 }
 
+export function EmptyScreen({ icon, title }: { icon?: ReactNode; title: string }) {
+  return (
+    <div className="py-12 text-center">
+      {icon}
+      <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+    </div>
+  )
+}
+
 export function EmptyState({
   title,
   description,

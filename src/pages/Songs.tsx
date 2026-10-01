@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { Music, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { Menu } from '@base-ui/react/menu'
 import { useRole } from '@/hooks/useRole'
 import { useArchiveSong, useCreateSong, useSongs } from '@/features/songs/hooks'
@@ -7,6 +7,7 @@ import { isDuplicateError } from '@/features/songs/api'
 import SongSearch from '@/features/songs/components/SongSearch'
 import { AddDialog } from '@/shared/components/AddDialog'
 import { MediaRow, RowIconButton } from '@/shared/components/MediaRow'
+import { EmptyScreen } from '@/shared/components/StateFeedback'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -208,7 +209,7 @@ export default function Songs() {
           ))}
         </ul>
         {(songs ?? []).length === 0 && !isLoading && (
-          <p className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">{t.songs.empty} {isAdmin ? t.songs.emptyAdminHint : ''}</p>
+          <EmptyScreen icon={<Music size={48} aria-hidden="true" className="mx-auto text-muted-foreground" />} title={`${t.songs.empty} ${isAdmin ? t.songs.emptyAdminHint : ''}`} />
         )}
       </div>
     </div>
