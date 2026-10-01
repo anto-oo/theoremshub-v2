@@ -38,6 +38,14 @@ export function useAuditionApplications(auditionId: string) {
   })
 }
 
+export function useMyAuditionApplications(applicantId: string | undefined) {
+  return useQuery({
+    queryKey: ['myAuditionApplications', applicantId],
+    queryFn: () => auditionApplicationsApi.listByApplicant(applicantId as string),
+    enabled: !!applicantId,
+  })
+}
+
 export function useCreateAuditionApplication() {
   const qc = useQueryClient()
   return useMutation({

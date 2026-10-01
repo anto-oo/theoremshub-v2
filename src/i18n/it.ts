@@ -609,6 +609,7 @@ export const it = {
     passwordUpdated: 'Password aggiornata.',
     myBadges: 'I miei badge',
     noActiveBadges: 'Nessun badge attivo.',
+    myAudition: 'La mia audizione',
   },
 
   badgePublic: {

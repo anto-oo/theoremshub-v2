@@ -65,6 +65,17 @@ export const auditionApplicationsApi = {
     return data as Database['public']['Tables']['audition_applications']['Row'][]
   },
 
+  async listByApplicant(applicantId: string) {
+    // RLS ("Applicants can view own applications") scopes this to own rows.
+    const { data, error } = await supabase
+      .from('audition_applications')
+      .select('*')
+      .eq('applicant_id', applicantId)
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return data as Database['public']['Tables']['audition_applications']['Row'][]
+  },
+
   async create(input: Database['public']['Tables']['audition_applications']['Insert']) {
     const { data, error } = await supabase
       .from('audition_applications')
