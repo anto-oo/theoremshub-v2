@@ -51,6 +51,17 @@ export const surveyResponsesApi = {
     return data as { id: string }[]
   },
 
+  // Every survey the user answered, with the answers themselves, so the
+  // member list can mark finished forms (RLS: auth.uid() = respondent_id).
+  async listAllMine(userId: string) {
+    const { data, error } = await supabase
+      .from('survey_responses')
+      .select('survey_id, answers')
+      .eq('respondent_id', userId)
+    if (error) throw error
+    return data as Pick<Database['public']['Tables']['survey_responses']['Row'], 'survey_id' | 'answers'>[]
+  },
+
   async create(input: Database['public']['Tables']['survey_responses']['Insert']) {
     const { data, error } = await supabase.from('survey_responses').insert(input).select().single()
     if (error) throw error

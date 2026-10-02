@@ -21,6 +21,7 @@ const Auditions = lazy(() => import('@/pages/Auditions'))
 const Inventory = lazy(() => import('@/pages/Inventory'))
 const Surveys = lazy(() => import('@/pages/Surveys'))
 const SurveyPublic = lazy(() => import('@/pages/SurveyPublic'))
+const MySurveys = lazy(() => import('@/pages/MySurveys'))
 const AdminSettings = lazy(() => import('@/pages/AdminSettings'))
 const Bulletin = lazy(() => import('@/pages/Bulletin'))
 const { BadgeByToken, BadgeByCode } = { BadgeByToken: lazy(() => import('@/pages/BadgePublic').then((m) => ({ default: m.BadgeByToken }))), BadgeByCode: lazy(() => import('@/pages/BadgePublic').then((m) => ({ default: m.BadgeByCode }))) }
@@ -128,6 +129,7 @@ const router = createBrowserRouter([
       { path: 'proposals', element: <MemberGuard><Proposals /></MemberGuard> },
       { path: 'auditions', element: <AuditionGuard><Auditions /></AuditionGuard> },
       { path: 'inventory', element: <InventoryGuard><Inventory /></InventoryGuard> },
+      { path: 'my-surveys', element: <RoleGuard><MySurveys /></RoleGuard> },
       { path: 'surveys', element: <AdminGuard><Surveys /></AdminGuard> },
       { path: 'admin/settings', element: <AdminGuard><AdminSettings /></AdminGuard> },
       { path: 'bulletin', element: <RoleGuard><Bulletin /></RoleGuard> },

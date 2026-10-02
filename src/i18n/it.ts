@@ -181,6 +181,7 @@ export const it = {
     goTo: {
       bulletin: 'Vai alla bacheca',
       surveys: 'Vai ai moduli',
+      mySurveys: 'Vai ai moduli da compilare',
       auditions: 'Vai alle audizioni',
     },
   },
@@ -219,7 +220,7 @@ export const it = {
   mySongs: {
     title: 'I tuoi brani',
     subtitle: '',
-    empty: 'Nessun hai ancora nessun brano assegnato',
+    empty: 'Non hai ancora nessun brano assegnato',
   },
 
   setlists: {
@@ -228,7 +229,7 @@ export const it = {
     create: 'Crea scaletta',
     addSong: 'Aggiungi brano',
     noSetlists: 'Nessuna scaletta.',
-    deleteConfirm: 'Eliminare questa scaletta? Brani e assegnazioni verranno rimossi.',
+    deleteConfirm: 'Sei sicuro di voler eliminare questa scaletta? Brani e assegnazioni verranno rimossi.',
     bulkConfirm: (action: string, n: number) => `${action} ${n} scalette?`,
     archiveSelected: 'Archivia selezionate',
     deleteSelected: 'Elimina selezionate',
@@ -492,6 +493,16 @@ export const it = {
       selectMax: (max: number) => `Seleziona al massimo ${max} opzioni.`,
       invalidOption: 'Opzione non valida.',
     },
+  },
+
+  mySurveys: {
+    title: 'Moduli',
+    subtitle: 'Moduli aperti a cui puoi rispondere',
+    empty: 'Nessun modulo aperto.',
+    pending: 'Da rispondere',
+    completed: 'Completato',
+    answersGiven: (n: number) => `${n} risposte date`,
+    openForm: (title: string) => `Apri ${title}`,
   },
 
   surveyPublic: {

@@ -105,7 +105,13 @@ export default function Dashboard() {
               <CircleChevronRight size={24} aria-hidden="true" />
             </Link>
           ) : (
-            <CircleChevronRight size={24} aria-hidden="true" className="text-muted-foreground" />
+            <Link
+              to="/my-surveys"
+              aria-label={t.dashboard.goTo.mySurveys}
+              className="rounded-full p-1 focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <CircleChevronRight size={24} aria-hidden="true" />
+            </Link>
           )}
         </div>
         {openSurveys.length === 0 ? (

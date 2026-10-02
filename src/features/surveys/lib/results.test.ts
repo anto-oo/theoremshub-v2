@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { computeSurveyResults, validateAnswers, type SurveyQuestion } from './results'
+import { computeSurveyResults, countAnswers, validateAnswers, type SurveyQuestion } from './results'
 
 const questions: SurveyQuestion[] = [
   {
@@ -43,6 +43,14 @@ describe('computeSurveyResults', () => {
     const results = computeSurveyResults(questions, [])
     expect(results[0]?.total).toBe(0)
     expect(results[0]?.options[0]?.pct).toBe(0)
+  })
+})
+
+describe('countAnswers', () => {
+  it('counts only non-empty answers', () => {
+    expect(countAnswers({ q1: 'a', q2: ['x'], q3: '', q4: '  ', q5: [] })).toBe(2)
+    expect(countAnswers({})).toBe(0)
+    expect(countAnswers(null)).toBe(0)
   })
 })
 

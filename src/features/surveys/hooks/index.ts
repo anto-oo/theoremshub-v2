@@ -54,6 +54,14 @@ export function useMySurveyResponses(surveyId: string, userId: string | null) {
   })
 }
 
+export function useAllMySurveyResponses(userId: string | null) {
+  return useQuery({
+    queryKey: ['mySurveyResponses', 'all', userId],
+    queryFn: () => surveyResponsesApi.listAllMine(userId as string),
+    enabled: !!userId,
+  })
+}
+
 export function useSubmitSurveyResponse() {
   const qc = useQueryClient()
   return useMutation({

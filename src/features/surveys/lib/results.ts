@@ -76,6 +76,15 @@ export function computeSurveyResults(
   })
 }
 
+// Answers actually given in one submitted response: non-empty text and
+// non-empty selections. Untouched open questions are stored as ''.
+export function countAnswers(value: unknown): number {
+  if (typeof value !== 'object' || value === null) return 0
+  return Object.values(value as Record<string, unknown>).filter((a) =>
+    Array.isArray(a) ? a.length > 0 : typeof a === 'string' && a.trim() !== '',
+  ).length
+}
+
 export function validateAnswers(
   questions: SurveyQuestion[],
   answers: SurveyAnswers,
